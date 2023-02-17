@@ -42,6 +42,7 @@ double take_now()
 
 int main()
 {
+    // Sheet is here: https://docs.google.com/spreadsheets/d/1EvVCcgXyuZWbLZRsnrxJSLxyeDBQ0q699RSG5cqHSuM/edit#gid=0
     typedef std::numeric_limits<double> dbl;
 
     long counts[11]{1000000, 3000000, 6000000, 9000000, 12000000, 15000000, 18000000, 30000000, 100000000, 500000000, 900000000};

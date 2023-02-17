@@ -2,6 +2,9 @@
 #include <string>
 #include <fstream>
 #include <Windows.h>
+#include <chrono>
+#include <time.h>
+#include <limits>
 
 using namespace std;
 
@@ -30,20 +33,29 @@ T med_t(T *A, int n)
     return A[n / 2];
 }
 
+double take_now()
+{
+    clock_t start = clock();
+    double seconds = (double)(start);
+    return seconds;
+}
+
 int main()
 {
-    // TEST data bottom
-    int a[4]{4, 3, 2, 6};
-    cout << max_t(a, 4) << endl;
+    typedef std::numeric_limits<double> dbl;
 
-    float b[5]{4.4, 3.2, -2.3, 6.0, -8.2};
-    cout << min_t(b, 5) << endl;
-    //           0    1    2    3      4    5    6    7     8
-    double c[9]{4.4, 3.2, -2.3, 6.0, -8.2, 3.2, -2.3, 6.0, -8.2};
-    cout << med_t(b, 9) << endl;
-
-    char d[5]{'0', 'Q', 'a', 'z', '-'};
-    cout << med_t(d, 5) << endl;
-
-    cout << min_t(d, 5);
+    long counts[11]{1000000, 3000000, 6000000, 9000000, 12000000, 15000000, 18000000, 30000000, 100000000, 500000000, 900000000};
+    for (long i = 0; i < 11; i++)
+    {
+        double *a = new double[counts[i]];
+        for (int k = 0; k < counts[i]; k++)
+        {
+            a[k] = 1.145678987654;
+        }
+        double start = take_now();
+        min_t(a, counts[i]);
+        double finish = take_now();
+        double diff = (finish - start);
+        cout << counts[i] << " " << diff  << endl;
+    }
 }

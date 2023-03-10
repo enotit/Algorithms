@@ -1,36 +1,105 @@
 #include <iostream>
-#include <string>
+#include <time.h>
 #include <fstream>
 #include <Windows.h>
 #include <chrono>
-#include <time.h>
 #include <limits>
 
 using namespace std;
 
-template <typename T>
-T max_t(T *A, int n)
+class A
 {
-    T max = A[0];
-    for (int i = 0; i < n; i++)
-        if (A[i] > max)
-            max = A[i];
-    return max;
+private:
+    int _a;
+    char _b;
+    float _c;
+
+public:
+    friend bool operator>(const A &c1, const A &c2);
+    friend bool operator<(const A &c1, const A &c2);
+    A(const int a, const char b, const float c) : _a{a}, _b{b}, _c{c} {};
+    A(){};
+    friend ostream &operator<<(std::ostream &out, const A &point);
+};
+bool operator>(const A &c1, const A &c2)
+{
+    return c1._a > c2._a;
 }
-template <typename T>
-T min_t(T *A, int n)
+
+bool operator<(const A &c1, const A &c2)
 {
-    T min = A[0];
-    for (int i = 0; i < n; i++)
-        if (A[i] < min)
-            min = A[i];
-    return min;
+    return c1._a < c2._a;
+}
+
+ostream &operator<<(ostream &out, const A &a)
+{
+    cout << "Поля А(" << a._a << ", " << a._b << ", " << a._c << ')' << endl;
+    return out;
 }
 
 template <typename T>
-T med_t(T *A, int n)
+void printArr(T *arr, int n)
 {
-    return A[n / 2];
+    for (int i = 0; i < n; i++)
+    {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+}
+
+template <typename T>
+void merge(T arr[], int l, int m, int r)
+{
+    int nL = m - l + 1;
+    int nR = r - m;
+    T left[nL], right[nR];
+    for (int i = 0; i < nL; i++)
+    {
+        left[i] = arr[l + i];
+    }
+    for (int j = 0; j < nR; j++)
+    {
+        right[j] = arr[m + 1 + j];
+    }
+    int i = 0, j = 0, k = l;
+    while (i < nL && j < nR)
+    {
+        if (left[i] < right[j])
+        {
+            arr[k] = left[i];
+            i++;
+        }
+        else
+        {
+            arr[k] = right[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < nL)
+    {
+        arr[k] = left[i];
+        i++;
+        k++;
+    }
+    while (j < nR)
+    {
+        arr[k] = right[j];
+        j++;
+        k++;
+    }
+}
+
+template <typename T>
+void mergeSortHe(T arr[], int l, int r)
+{
+    if (l < r)
+    {
+        int m = l + (r - l) / 2;
+        mergeSortHe(arr, l, m);
+        mergeSortHe(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
 }
 
 double take_now()
@@ -42,21 +111,31 @@ double take_now()
 
 int main()
 {
-    // Sheet is here: https://docs.google.com/spreadsheets/d/1EvVCcgXyuZWbLZRsnrxJSLxyeDBQ0q699RSG5cqHSuM/edit#gid=0
-    typedef std::numeric_limits<double> dbl;
-
-    long counts[11]{1000000, 3000000, 6000000, 9000000, 12000000, 15000000, 18000000, 30000000, 100000000, 500000000, 900000000};
-    for (long i = 0; i < 11; i++)
+    // Sheet on this task https://docs.google.com/spreadsheets/d/1EvVCcgXyuZWbLZRsnrxJSLxyeDBQ0q699RSG5cqHSuM/edit#gid=484089615
+    // ----------- PART 1 --------------
+    char arr[] = {'q', '1', '*', '2', '3', 'g'};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    mergeSortHe(arr, 0, n - 1);
+    printArr(arr, n);
+    // ----------- PART 2 --------------
+    A custom[] = {A(1, '1', 1.0), A(4, '4', 4.4), A(2, '2', 2.2), A(1, '1', 1.0), A(4, '4', 4.4)};
+    int customN = 5;
+    mergeSortHe(custom, 0, customN - 1);
+    printArr(custom, customN);
+    // ----------- PART 3 --------------
+    long counts[5] = {100000, 200000, 300000, 400000, 500000};
+    for (long i = 0; i < 5; i++)
     {
-        double *a = new double[counts[i]];
-        for (int k = 0; k < counts[i]; k++)
+        long count = counts[i];
+        int *a = new int[count];
+        for (int k = 0; k < count; k++)
         {
-            a[k] = 1.145678987654;
+            a[k] = 1;
         }
         double start = take_now();
-        min_t(a, counts[i]);
+        mergeSortHe(a, 0, count - 1);
         double finish = take_now();
         double diff = (finish - start);
-        cout << counts[i] << " " << diff  << endl;
+        cout << count << " " << diff << endl;
     }
 }

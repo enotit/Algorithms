@@ -1,5 +1,7 @@
 #include <iostream>
 #include <time.h>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -64,6 +66,17 @@ public:
         }
         cout << current->data << endl;
     }
+    std::string getAddresses() {
+        std::stringstream ss;
+        if (tail != nullptr) {
+            TNode<T>* current = tail->next;
+            do {
+                ss << &(current->data) << " ";
+                current = current->next;
+            } while (current != tail->next);
+        }
+        return ss.str();
+    }
 };
 double take_now()
 {
@@ -74,39 +87,16 @@ double take_now()
 
 int main() {
     CircularLinkedList<int> list;
-    list.insert(1);
-    list.insert(2);
-    list.insert(3);
-    list.print();
-
-    list.remove();
-    list.print();
-
-    list.remove();
-    list.print();
-
-    list.remove();
-    list.print();
-    list.clear();
-    long counts[5] = {100000, 200000, 300000, 400000, 500000};
-    for (long i = 0; i < 5; i++)
-    {
-        long count = counts[i];
-        double start = take_now();
-        for (int k = 0; k < count; k++)
-        {
-            list.insert(rand());
-        }
-        double finish = take_now();
-        double diff = (finish - start);
-        cout << "Вставка: " << count << " " << diff << endl;
-
-        start = take_now();
-        list.clear();
-        finish = take_now();
-        diff = (finish - start);
-        cout << "Удаление: " << count << " " << diff << endl;
+    for (int i = 1; i <= 5; i++) {
+        list.insert(i);
     }
+    std::cout << "Адреса элементов после добавления: " << list.getAddresses() << std::endl; // 0x1c9ef3716d0 0x1c9ef371710 0x1c9ef371750 0x1c9ef371790 0x1c9ef3717d0 
+
+    for (int i = 1; i <= 2; i++) {
+        list.remove();
+    }
+    std::cout << "Адреса элементов после удаления: " << list.getAddresses() << std::endl; // 0x1c9ef371750 0x1c9ef371790 0x1c9ef3717d0
 
     return 0;
+
 }
